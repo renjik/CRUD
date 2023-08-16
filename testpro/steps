@@ -1,0 +1,12 @@
+first create a form in files.html page
+
+then create a table in models.py
+
+then create a forms.py file in app folder and import model form and create a new form inherit from model form and add table fields in it
+
+then create a view function to get the file 
+
+then add url in settings  add path in url file in project folder
+
+then create a dictionary for get the link of each file fields to download 
+add this key and fetch link of each files in new html page home.html

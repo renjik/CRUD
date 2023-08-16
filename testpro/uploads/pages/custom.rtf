@@ -1,0 +1,451 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang1033{\fonttbl{\f0\fnil\fcharset255 Times New Roman;}{\f1\fnil\fcharset0 Times New Roman;}}
+{\colortbl ;\red255\green0\blue0;\red0\green255\blue0;\red0\green0\blue255;\red255\green255\blue0;\red0\green176\blue80;}
+{\*\generator Riched20 10.0.22621}\viewkind4\uc1 
+\pard\sa200\sl276\slmult1\qc\b\f0\fs40 form=Authentication method\par
+siginup and login ,logout\par
+
+\pard\sa200\sl276\slmult1\par
+\par
+\par
+\fs28 in template folder create 4-html files:\par
+
+\pard 
+{\pntext\f0 1.\tab}{\*\pn\pnlvlbody\pnf0\pnindent0\pnstart1\pndec{\pntxta.}}
+\fi-360\li720\sa200\sl276\slmult1 base.html\par
+{\pntext\f0 2.\tab}home.html\par
+{\pntext\f0 3.\tab}siginup1.html\par
+{\pntext\f0 4.\tab}login1.html\par
+
+\pard\sa200\sl276\slmult1\cf1\ul base.html\cf0\ulnone\par
+
+\pard\sa200\sl240\slmult1\fs32 <!DOCTYPE html>\par
+\highlight2\{% load static %\}\par
+\highlight0 <html lang="en">\par
+<head>\par
+    <meta charset="UTF-8">\par
+    <title>Title</title>\par
+    <link rel="stylesheet" href="{{\field{\*\fldinst{HYPERLINK https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css }}{\fldrslt{https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css\ul0\cf0}}}}\f0\fs32 ">\par
+\highlight2 <link rel="stylesheet" href="\{% static 'css\\b.css' %\}">\highlight0\par
+</head>\par
+<body >\par
+<h1 class="bg-info">My site</h1>\par
+    <a href="\{% url 'home' %\}">Home</a>\highlight4\par
+    \{% if user.is_authenticated %\}\par
+\highlight0     <a href\cf1 ="\{% url 'logout' %\}\cf0 ">Logout</a>\par
+    \{% else %\}\par
+    <a href\cf1 ="\{% url 'signup1' %\}\cf0 ">signUp</a>\par
+    <a href\cf1 ="\{% url 'login1' %\}\cf0 ">Login</a>\par
+    \{% endif %\}\par
+\cf5\{% block body_block %\}\par
+\{% endblock %\}\par
+\cf0 </body>\par
+</html>\par
+\cf1\ul\fs28 home.html\par
+\cf0\ulnone <!DOCTYPE html>\par
+<html lang="en">\par
+<head>\par
+    <meta charset="UTF-8">\par
+    <title>Title</title>\par
+</head>\par
+<body>\par
+\highlight4\{% extends "base.html" %\}\par
+\{% block body_block %\}\par
+<h1>Welcome to Home page</h1>\par
+\{% if user.is_authenticated %\}\par
+\{\{user.username\}\}\par
+\{% else %\}\par
+<p>visitor</p>\par
+\{% endif %\}\par
+\{% endblock %\}\par
+\highlight0\par
+</body>\par
+</html>\par
+\cf1\ul\par
+siginup1.html\par
+\cf0\ulnone <!DOCTYPE html>\par
+\par
+<html lang="en">\par
+<head>\par
+    <meta charset="UTF-8">\par
+    <title>Title</title>\par
+    ">\par
+</head>\par
+<body>\par
+\highlight4\{% extends "base.html" %\}\par
+\par
+\{% load static %\}\par
+<link rel="stylesheet" href="\{% static 'css\\b.css' %\}">\par
+\{% block body_block %\}\par
+<h1>SignUp</h1>\par
+<form method="post">\par
+ \{% csrf_token %\}\par
+     \{\{form\}\}\par
+<input type="submit" value="SignUp1"></form>\par
+\{% endblock %\}\par
+\highlight0 </body>\par
+</html>\par
+\cf1\ul login1.html\cf0\ulnone\par
+<!DOCTYPE html>\par
+<html lang="en">\par
+<head>\par
+    <meta charset="UTF-8">\par
+    <title>Title</title>\par
+</head>\par
+<body>\par
+\highlight4\{% extends "base.html" %\}\par
+\{% block body_block %\}\par
+\par
+<h1>login now</h1>\par
+<form method="post">\par
+ \{% csrf_token %\}\par
+     username:<input type="text" name="n"><br><br>\par
+     password:<input type="text" name="p"><br><br>\par
+\par
+<input type="submit" value="login"><br>\par
+</form>\par
+\par
+\{% endblock %\}\par
+\highlight0 </body>\par
+</html>\par
+\par
+\cf1\ul\par
+views.py\par
+\cf0\ulnone from django.shortcuts import render\par
+\highlight4 from django.contrib.auth.forms import UserCreationForm\par
+\highlight0 # Create your views here.\par
+\highlight4 from django.http import HttpResponse\par
+from django.contrib.auth import authenticate,login,logout\par
+def home(request):\par
+    return render(request, 'home.html')\par
+\par
+def base(request):\par
+    return render(request,'base.html')\par
+\par
+\par
+def signUp1(request):\par
+   form = UserCreationForm()\par
+   if(request.method=='POST'):\par
+       form = UserCreationForm(request.POST)\par
+       if form.is_valid():\par
+           form.save()\par
+           return home(request)\par
+\par
+   return render(request, 'signup1.html', \{"form": form\})\par
+########################################################################\par
+def user_login1(request):\par
+    if(request.method=="POST"):\par
+        name = request.POST['n']\par
+        password = request.POST['p']\par
+        user = authenticate(username=name, password=password)\par
+        if user:\par
+            login(request,user)\par
+            \par
+            return home(request)\par
+      \par
+        else:\par
+             return HttpResponse('invalid ...no user found')\par
+    return render(request, 'login1.html')\par
+\par
+def user_logout1(request):\par
+        logout(request)\par
+        return user_login1(request)\par
+\par
+\highlight0 urls.py\highlight4\par
+\highlight0 from django.contrib import admin\par
+\par
+from django.urls import path,include\par
+from app1 import views\par
+urlpatterns = [\par
+    path('accounts/', include('django.contrib.auth.urls')),\par
+    path('',views.base,name='base'),\par
+    path('login1/',views.user_login1, name='login1'),\par
+    path('logout1/',views.user_logout1, name='logout1'),   \par
+    path('admin/', admin.site.urls),\par
+    path('home/',views.home,name='home'),\par
+    path('signup/',views.signUp1,name='signup1'),\par
+   \par
+]\par
+settings.py\par
+ROOT_URLCONF = 'pro.urls'\par
+\par
+\highlight4 LOGIN_REDIRECT_URL="home"\par
+LOGOUT_REDIRECT_URL = "login1"\par
+LOGIN_URL ='login1'\par
+LOGOUT_URL ='logout1'\par
+\highlight0\b0\f1\fs22\lang9\par
+->terminal\par
+\tab c://--------------->python manage.py migrate\par
+\tab c://--------------->python manage.py runserver                                  \par
+\par
+\par
+\par
+\par
+
+\pard\sa200\sl240\slmult1\qc\fs48 Password Change\par
+
+\pard\sa200\sl240\slmult1\par
+\par
+In template folder Create a new folder named registration\par
+->templates\par
+
+\pard\li720\sa200\sl240\slmult1 ->registration\par
+
+\pard 
+{\pntext\f1 1.\tab}{\*\pn\pnlvlbody\pnf1\pnindent0\pnstart1\pndec{\pntxta.}}
+\fi-360\li2160\sa200\sl240\slmult1 password_change_form.html\par
+{\pntext\f1 2.\tab}password_ change_done.html\par
+
+\pard\li1440\sa200\sl240\slmult1\fs22\par
+
+\pard 
+{\pntext\f1 1.\tab}{\*\pn\pnlvlbody\pnf1\pnindent0\pnstart1\pndec{\pntxta.}}
+\fi-360\li720\sa200\sl240\slmult1\fs48 password_change_form.html\fs22\par
+
+\pard\sa200\sl240\slmult1\par
+
+\pard\li720\sa200\sl240\slmult1\fs28 <!DOCTYPE html>\par
+<html lang="en">\par
+<head>\par
+    <meta charset="UTF-8">\par
+    <title>Title</title>\par
+</head>\par
+<body>\par
+\{% extends "base.html" %\}\par
+\{% block body_block %\}\par
+<h1> New Password </h1>\par
+<form method="post">\par
+ \{% csrf_token %\}\par
+     \{\{form\}\}\par
+<input type="submit" value="change"></form>\par
+\{% endblock %\}\par
+</body>\par
+</html>\par
+
+\pard\sa200\sl240\slmult1\par
+\fs24\lang1033 2.\tab\fs48\lang9 password_ change_done.html\par
+
+\pard\li720\sa200\sl240\slmult1\fs32 <!DOCTYPE html>\par
+<html lang="en">\par
+<head>\par
+    <meta charset="UTF-8">\par
+    <title>Title</title>\par
+</head>\par
+<body>\par
+\{% extends "base.html" %\}\par
+\{% block body_block %\}\par
+<h3>password changed successfully</h3>\par
+\{% endblock %\}\par
+</body>\par
+</html>\par
+
+\pard\sa200\sl240\slmult1\fs22\par
+
+\pard\sa200\sl240\slmult1\qc\fs44 Custom user creation\par
+
+\pard\sa200\sl240\slmult1\cf1\ul models.py\cf0\ulnone\par
+\fs22\par
+from django.db import models\par
+from django.contrib.auth.models import AbstractUser\par
+# from django.contrib.auth.models import AbstractUser\par
+class CustomUser(AbstractUser):\par
+     email = models.EmailField()\par
+     phone = models.CharField(max_length=10)\par
+\cf1\ul      \par
+\fs40 forms.py\par
+\cf0\ulnone\fs22\par
+from app1.models import CustomUser\par
+from django.contrib.auth.forms import UserCreationForm\par
+class CustomUserCreationForm(UserCreationForm):\par
+   class Meta:\par
+      model = CustomUser\par
+      fields = UserCreationForm.Meta.fields+('email','phone')\par
+\par
+\fs48 In template folder Create a new folder named registration\par
+->templates\par
+
+\pard\li720\sa200\sl240\slmult1 ->registration\par
+
+\pard 
+{\pntext\f1 1.\tab}{\*\pn\pnlvlbody\pnf1\pnindent0\pnstart1\pndec{\pntxta.}}
+\fi-360\li2160\sa200\sl240\slmult1 password_reset_form.html\par
+{\pntext\f1 2.\tab}password_reset_confirm.html\par
+{\pntext\f1 3.\tab}password_reset_done.html\par
+{\pntext\f1 4.\tab}password_reset_complete.html\par
+
+\pard\li1440\sa200\sl240\slmult1\par
+
+\pard\sa200\sl240\slmult1\fs22\par
+\cf1\ul\fs48 password_reset_form.html\cf0\ulnone\par
+\fs32 <!DOCTYPE html>\par
+<html lang="en">\par
+<head>\par
+    <meta charset="UTF-8">\par
+    <title>Title</title>\par
+</head>   \par
+<body>\par
+\{% extends "base.html" %\}\par
+\{% block body_block %\}\par
+<h3>Password Reset</h3>\par
+<p>Forgotten your password? Enter your email address below,\par
+    and we'll email instructions for setting a new one.</p>\par
+<form method="post">\par
+     \{% csrf_token %\}\par
+      name:<input type="text" name="name">\par
+    <input type="submit" value="send">\par
+</form>\par
+\{% endblock %\}\par
+</body>\par
+</html>\par
+\cf1\ul\fs48 password_reset_confirm.html\par
+\cf0\ulnone\fs32 <!DOCTYPE html>\par
+<html lang="en">\par
+<head>\par
+    <meta charset="UTF-8">\par
+    <title>Title</title>\par
+</head>\par
+<body>\par
+\{% extends "base.html" %\}\par
+\{% block body_block %\}\par
+\{% if validlink %\}\par
+<h4>Set new password</h4>\par
+<form method="post">\par
+    \{% csrf_token %\}\par
+    new password<input type="text" name="new_password1"><br>\par
+    confirm password<input type="text" name="new_password2">\par
+    <input type="submit" value="change password">\par
+</form>\par
+\par
+\{% else %\}\par
+\par
+<p>Your password has been set. You may go ahead and log in now.</p>\par
+        <a href="\{% url 'login'%\}" class="btn btn-primary">Log in</a>\par
+\{% endif %\}\par
+\par
+\{% endblock %\}\par
+</body>\par
+</html>\par
+\fs48\par
+\cf1\ul password_reset_done.html\par
+\cf0\ulnone\fs32 <!DOCTYPE html>\par
+<html lang="en">\par
+<head>\par
+    <meta charset="UTF-8">\par
+    <title>Title</title>\par
+</head>\par
+<body>\par
+\{% extends "base.html" %\}\par
+\{% block body_block %\}\par
+\par
+<h4>password Reset sent</h4>\par
+<p>We\rquote ve emailed you instructions for setting your password,\par
+    if an account exists with the email you entered. You should receive them shortly.\par
+    If you don\rquote t receive an email, please make sure you\rquote ve entered the address you registered with,\par
+    and check your spam folder.</p>\par
+\par
+\{% endblock %\}\par
+</body>\par
+</html>\par
+\cf1\ul\fs48 password_reset_complete.html\par
+\cf0\ulnone\fs22\par
+\fs32 <!DOCTYPE html>\par
+<html lang="en">\par
+<head>\par
+    <meta charset="UTF-8">\par
+    <title>Title</title>\par
+</head>\par
+<body>\par
+\{% extends "base.html" %\}\par
+\{% block body_block %\}\par
+<!--Password Reset Complete-->\par
+    \{% if validlink %\}\par
+\tab     <h2 class="font-weight-bold mt-3">Password reset complete</h2>\par
+\tab\tab <hr>\par
+        <p>Your password has been set. You may go ahead and log in now.</p>\par
+        <a href="/login" class="btn btn-primary">Log in</a>\par
+    \{% else %\}\par
+   \{% endif %\}\par
+\{% endblock %\}\par
+</body>\par
+</html>\par
+\cf1\ul base.html\par
+\cf0\ulnone <!DOCTYPE html>\par
+\{% load static %\}\par
+<html lang="en">\par
+<head>\par
+    <meta charset="UTF-8">\par
+    <title>Title</title>\par
+    <link rel="stylesheet" href="{{\field{\*\fldinst{HYPERLINK https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css }}{\fldrslt{https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css\ul0\cf0}}}}\f1\fs32 ">\par
+<link rel="stylesheet" href="\{% static 'css\\b.css' %\}">\par
+</head>\par
+<body >\par
+<h1 class="bg-info">My site</h1>\par
+<div class="btn-group btn-group-justified" id="y" style="background:white">\par
+    <a href="\{% url 'home' %\}" class="btn btn-primary">Home</a>\par
+    \{% if user.is_authenticated %\}\highlight4\par
+    <a href="\{% url 'password_change' %\}" class="btn btn-primary">change_password</a>\par
+\highlight0     <a href="\{% url 'logout' %\}" class="btn btn-primary">Logout</a>\par
+    \{% else %\}\par
+    <a href="\{% url 'signup1' %\}" class="btn btn-primary">signUp</a>\par
+    <a href="\{% url 'login1' %\}" class="btn btn-primary">Login</a>\par
+ \par
+    \{% endif %\}\par
+\par
+</div>\par
+\{% block body_block %\}\par
+\par
+\{% endblock %\}\par
+</body>\par
+</html>\par
+\cf1\ul\fs40 login1.html\cf0\ulnone\fs22\par
+<!DOCTYPE html>\par
+<html lang="en">\par
+<head>\par
+    <meta charset="UTF-8">\par
+    <title>Title</title>\par
+</head>\par
+<body>\par
+\{% extends "base.html" %\}\par
+\{% block body_block %\}\par
+\par
+<h1>login now</h1>\par
+<form method="post">\par
+ \{% csrf_token %\}\par
+     username:<input type="text" name="n"><br><br>\par
+     password:<input type="text" name="p"><br><br>\par
+\par
+<input type="submit" value="login"><br>\par
+\highlight4 <a href="\{% url 'password_reset' %\}">forgot password</a>\par
+\highlight0 </form>\par
+\par
+\{% endblock %\}\par
+</body>\par
+</html>\par
+\cf1\ul\fs40\par
+settings.py\par
+\cf0\ulnone\fs22 LOGIN_REDIRECT_URL="home"\par
+LOGOUT_REDIRECT_URL = "login1"\par
+LOGIN_URL ='login1'\par
+LOGOUT_URL ='logout1'\par
+\par
+\par
+AUTH_USER_MODEL ='app1.CustomUser'\par
+\fs40\par
+\cf1\ul urls.py\cf0\ulnone\par
+\fs22 from django.contrib import admin\par
+from django.conf.urls import url\par
+from django.urls import path\highlight4 ,include\highlight0\par
+from app1 import views\par
+urlpatterns = [\par
+    \highlight4 path('accounts/', include('django.contrib.auth.urls')),\par
+\highlight0     path('',views.base,name='base'),\highlight4\par
+\highlight0     path('login1/',views.user_login1, name='login1'),\par
+    path('logout1/',views.user_logout1, name='logout1'),   \par
+    path('admin/', admin.site.urls),\par
+    path('home/',views.home,name='home'),\par
+    path('signup/',views.signUp1,name='signup1'),\par
+   \par
+]    \par
+-----------------------------------------------------------------------------------------------------------\par
+\par
+}
+ 
